@@ -1,17 +1,17 @@
 from cohere import Client, Message_User, Message_Chatbot
 from aiogram.filters import Command
 from aiogram import Bot, Dispatcher, types
-import asyncio
-import logging
+import asyncio, logging
 
 from config import *
 from tokens import *
 
 
 async def main() -> None:
+    logger = logging.getLogger(__name__)
     bot = Bot(token=BOT_API_TOKEN)
     dp = Dispatcher()
-    chats = {}
+    chats = dict()
 
     @dp.message(Command(commands=['start']))
     async def start_message(msg: types.Message) -> None:
@@ -32,7 +32,7 @@ async def main() -> None:
         client = Client(client_name=user, api_key=COHERE_API_TOKEN)
         resp = dict(client.chat(
 
-            message= text,
+            message=text,
 
             model="command-r-plus",
 
@@ -45,15 +45,17 @@ async def main() -> None:
         context.append(Message_User(message=text))
         context.append(Message_Chatbot(message=resp))
         chats[user] = context
+        logger.info(f'msg: {text} | by: {user} | response: {resp}')
 
         await msg.answer(resp, parse_mode='Markdown')
-
-    @dp.message()
-    async def echo(msg: types.Message) -> None:
-        await msg.answer(msg.text)
 
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        filename='log.log',
+        filemode='w'
+    )
     asyncio.run(main())
