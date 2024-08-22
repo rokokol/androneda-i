@@ -163,4 +163,4 @@ cython_debug/
 
 # Loaf.AI part
 tokens.py
-log.log
+logs/
