@@ -1,3 +1,6 @@
+from enum import Enum
+import json
+
 PREAMBLE = '''I am a Russian-speaking student from Russia. My nickname is: @{}. I study mathematics and programming, but I am also interested in biology, physics, and chemistry. I specialize in machine learning.
 My goal is to start working in the scientific field, focusing on machine learning and data analysis.
 I can spend hours discussing mathematics or philosophy. I also enjoy playing the guitar. I absolutely love girls who love to talk about philosophy.
@@ -13,12 +16,30 @@ CONNECTORS = ([], [{"id": "web-search"}])
 TEST = False
 LINK_CITE = '[{}]({})'
 COMMANDS = '''
-Список команд: 
-            
-🌌 /start — Запуск бота, сообщение с приветствием;       
-💡 /help — Запрос справки;     
-💻 /auto — on/off автоопределение режима работы;      
-💬 /texttotext — Переход в текстовый режим;      
-🎨 /texttoimage — Переход в режим генерации изображений;    
+Список команд:
+
+🌌 /start — Запуск бота, сообщение с приветствием;
+💡 /help — Запрос справки;
+💻 /auto — on/off автоопределение режима работы;
+💬 /texttotext — Переход в текстовый режим;
+🎨 /texttoimage — Переход в режим генерации изображений;
 🌐 /web — on/off поиск изображения в интернете (⚠️ требует в 2-3 раза больше времени!);
 '''
+
+
+class Modes(Enum):
+    TEXTTOTEXT = 'text-to-text',
+    TEXTTOIMG = 'text-to-image',
+    WEB = 'WEB'
+
+
+def serialize_to_json(obj, filename):
+    with open(filename, 'w') as file:
+        json.dump(obj, file)
+
+
+def deserialize_from_json(filename) -> dict:
+    with open(filename, 'r') as file:
+        obj = dict(json.load(file))
+
+    return obj
